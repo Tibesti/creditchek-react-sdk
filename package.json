@@ -1,5 +1,5 @@
 {
-  "name": "creditchek-react-sdk",
+  "name": "@creditcliq/react-sdk",
   "version": "2.0.0",
   "description": "React SDK for the CreditChek verification widget: identity, liveness, credit, income and Recova in a few lines of code.",
   "keywords": [
@@ -13,13 +13,16 @@
     "credit-report",
     "widget"
   ],
-  "homepage": "https://github.com/Tibesti/creditchek-react-sdk#readme",
+  "homepage": "https://github.com/creditcliq/approval-web#readme",
   "bugs": {
-    "url": "https://github.com/Tibesti/creditchek-react-sdk/issues"
+    "url": "https://github.com/creditcliq/approval-web/issues"
   },
   "repository": {
     "type": "git",
-    "url": "git+https://github.com/Tibesti/creditchek-react-sdk.git"
+    "url": "git+https://github.com/creditcliq/approval-web.git"
+  },
+  "publishConfig": {
+    "registry": "https://npm.pkg.github.com"
   },
   "license": "ISC",
   "author": "Tobiloba Olugbemi",

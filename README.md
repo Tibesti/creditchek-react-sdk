@@ -91,12 +91,30 @@ Always use a secret key and a public key **from the same app and the same pair**
 
 ## Installation
 
+The SDK is published to GitHub Packages, so npm needs to know where to find it and needs a GitHub token to download it.
+
+**1. Point the `@creditcliq` scope at GitHub Packages.** Add an `.npmrc` file to the root of your project:
+
+```
+@creditcliq:registry=https://npm.pkg.github.com
+```
+
+**2. Add a GitHub token.** Create a [personal access token (classic)](https://github.com/settings/tokens) with the `read:packages` scope, and add it to the `.npmrc` in your home directory (`~/.npmrc`), not the one in your project:
+
+```
+//npm.pkg.github.com/:_authToken=YOUR_GITHUB_TOKEN
+```
+
+In CI, store the token as a secret and write this line before `npm install`.
+
+**3. Install:**
+
 ```bash
-npm install creditchek-react-sdk
+npm install @creditcliq/react-sdk
 # or
-yarn add creditchek-react-sdk
+yarn add @creditcliq/react-sdk
 # or
-pnpm add creditchek-react-sdk
+pnpm add @creditcliq/react-sdk
 ```
 
 `react` 17 or later is a peer dependency. The SDK has no other dependencies.
@@ -175,7 +193,7 @@ The response `data` looks like this:
 Use the `useCreditChek` hook and call `open` from a click handler:
 
 ```jsx
-import { useCreditChek } from "creditchek-react-sdk";
+import { useCreditChek } from "@creditcliq/react-sdk";
 
 async function createSession() {
   const res = await fetch("/api/verification/session", { method: "POST" });
@@ -205,7 +223,7 @@ export function VerifyButton() {
 Prefer a ready-made button? `CreditChekButton` does the same. Any other props go to the `<button>`:
 
 ```jsx
-import { CreditChekButton } from "creditchek-react-sdk";
+import { CreditChekButton } from "@creditcliq/react-sdk";
 
 <CreditChekButton
   publicKey="YOUR_PUBLIC_KEY"
@@ -275,7 +293,7 @@ For the name, date of birth and gender behind a completed BVN, call `GET /auth/w
 
 ```jsx
 import { useState } from "react";
-import { useCreditChek } from "creditchek-react-sdk";
+import { useCreditChek } from "@creditcliq/react-sdk";
 
 export default function Verification({ customer }) {
   const [message, setMessage] = useState("");
@@ -474,7 +492,7 @@ v2 follows the new session-based widget, which needs a `sessionId` created by yo
 
 | v1 | v2 |
 |---|---|
-| `import creditchekSDK from "creditchek-react-sdk"` | `import { useCreditChek } from "creditchek-react-sdk"` |
+| `import creditchekSDK from "creditchek-react-sdk"` | `import { useCreditChek } from "@creditcliq/react-sdk"` |
 | `creditchekSDK.open({ publicKey, module, onComplete, onClose })` | `const { open } = useCreditChek({ publicKey, modules, onStep, onClose })`, then `open(sessionId)` |
 | `module: ["identity"]` | `modules: ["identity"]` or `["identity", "liveness"]` |
 | `"income"`, `"credit"`, `"recova"` modules | Not available in v2 yet |
@@ -487,4 +505,4 @@ v2 follows the new session-based widget, which needs a `sessionId` created by yo
 
 ## Support
 
-For help with this library, open an issue on the [GitHub repo](https://github.com/Tibesti/creditchek-react-sdk/issues) or email [support@creditchek.africa](mailto:support@creditchek.africa).
+For help with this library, open an issue on the [GitHub repo](https://github.com/creditcliq/approval-web/issues) or email [support@creditchek.africa](mailto:support@creditchek.africa).
