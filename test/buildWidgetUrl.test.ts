@@ -12,6 +12,7 @@ describe("buildWidgetUrl", () => {
     expect(url.searchParams.get("module")).toBe("identity");
     expect(url.searchParams.get("source")).toBe("react");
     expect(url.searchParams.get("hostOrigin")).toBe(window.location.origin);
+    expect(url.searchParams.has("environment")).toBe(false);
   });
 
   it("URL-encodes the public key", () => {
@@ -19,7 +20,7 @@ describe("buildWidgetUrl", () => {
     expect(raw).toContain("publicKey=vy6LZWI%2Fl%2FpOc868%2Bz8LAg%3D%3D");
   });
 
-  it("uses the development widget and optional params", () => {
+  it("passes the environment and optional params", () => {
     const url = new URL(
       buildWidgetUrl(
         {
@@ -32,7 +33,8 @@ describe("buildWidgetUrl", () => {
         "s",
       ),
     );
-    expect(url.origin).toBe("https://development--securedwidget.netlify.app");
+    expect(url.origin).toBe("https://securedwidget.creditchek.africa");
+    expect(url.searchParams.get("environment")).toBe("development");
     expect(url.searchParams.get("module")).toBe("identity,liveness");
     expect(url.searchParams.get("themeColor")).toBe("0046E6");
     expect(url.searchParams.get("firstName")).toBe("Ada");
@@ -59,11 +61,24 @@ describe("buildWidgetUrl", () => {
     expect(url.origin).toBe("http://localhost:5173");
   });
 
+  it("uses the same widget address for both environments", () => {
+    const production = new URL(buildWidgetUrl({ publicKey: PUBLIC_KEY, environment: "production" }, "s"));
+    expect(production.origin).toBe("https://securedwidget.creditchek.africa");
+    expect(production.searchParams.get("environment")).toBe("production");
+
+    const custom = new URL(
+      buildWidgetUrl({ publicKey: PUBLIC_KEY, environment: "development", widgetUrl: "http://localhost:5173/" }, "s"),
+    );
+    expect(custom.origin).toBe("http://localhost:5173");
+    expect(custom.searchParams.get("environment")).toBe("development");
+  });
+
   it.each([
     [{ publicKey: "" }, "s"],
     [{ publicKey: PUBLIC_KEY }, ""],
     [{ publicKey: PUBLIC_KEY, modules: [] }, "s"],
     [{ publicKey: PUBLIC_KEY, widgetUrl: "not a url" }, "s"],
+    [{ publicKey: PUBLIC_KEY, environment: "staging" as never }, "s"],
   ])("rejects invalid config %#", (config, sessionId) => {
     expect(() => buildWidgetUrl(config, sessionId)).toThrow(CreditChekError);
   });

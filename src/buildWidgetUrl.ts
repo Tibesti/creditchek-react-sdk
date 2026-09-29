@@ -1,12 +1,12 @@
-import { LOCAL_WIDGET_URL, WIDGET_SOURCE, WIDGET_URLS } from "./constants";
+import { ENVIRONMENTS, LOCAL_WIDGET_URL, WIDGET_SOURCE, WIDGET_URL } from "./constants";
 import { CreditChekError } from "./errors";
 import type { WidgetConfig, WidgetPrefill } from "./types";
 
 const PREFILL_KEYS: (keyof WidgetPrefill)[] = ["firstName", "lastName", "dob", "bvn", "nin", "email"];
 
 /** The widget address for this config, without any query string. */
-export function resolveWidgetUrl(config: Pick<WidgetConfig, "environment" | "widgetUrl">): string {
-  return config.widgetUrl || LOCAL_WIDGET_URL || WIDGET_URLS[config.environment ?? "production"];
+export function resolveWidgetUrl(config: Pick<WidgetConfig, "widgetUrl">): string {
+  return config.widgetUrl || LOCAL_WIDGET_URL || WIDGET_URL;
 }
 
 /** Throws a `CreditChekError` with code `invalid_config` if the config can't open a widget. */
@@ -16,6 +16,9 @@ export function assertWidgetConfig(config: WidgetConfig): void {
   }
   if (config.modules && config.modules.length === 0) {
     throw new CreditChekError("invalid_config", "`modules` must list at least one step, or be left out.");
+  }
+  if (config.environment !== undefined && !ENVIRONMENTS.includes(config.environment)) {
+    throw new CreditChekError("invalid_config", '`environment` must be "production" or "development".');
   }
   try {
     new URL(resolveWidgetUrl(config));
@@ -38,6 +41,8 @@ export function buildWidgetUrl(config: WidgetConfig, sessionId: string): string 
   params.set("sessionId", sessionId);
   params.set("module", (config.modules ?? ["identity"]).join(","));
   params.set("source", WIDGET_SOURCE);
+  // Without it the widget picks live or sandbox from the key's type
+  if (config.environment) params.set("environment", config.environment);
 
   // Lets the widget address its messages to this page only
   const hostOrigin = typeof window !== "undefined" ? window.location.origin : "";

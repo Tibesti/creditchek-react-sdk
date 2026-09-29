@@ -4,10 +4,8 @@
 import { useCallback, useEffect, useRef, useState } from "react";
 
 // src/constants.ts
-var WIDGET_URLS = {
-  production: "https://securedwidget.creditchek.africa/",
-  development: "https://development--securedwidget.netlify.app/"
-};
+var WIDGET_URL = "https://securedwidget.creditchek.africa/";
+var ENVIRONMENTS = ["production", "development"];
 var LOCAL_WIDGET_URL = "";
 var WIDGET_SOURCE = "react";
 
@@ -26,8 +24,7 @@ var CreditChekError = class extends Error {
 // src/buildWidgetUrl.ts
 var PREFILL_KEYS = ["firstName", "lastName", "dob", "bvn", "nin", "email"];
 function resolveWidgetUrl(config) {
-  var _a;
-  return config.widgetUrl || LOCAL_WIDGET_URL || WIDGET_URLS[(_a = config.environment) != null ? _a : "production"];
+  return config.widgetUrl || LOCAL_WIDGET_URL || WIDGET_URL;
 }
 function assertWidgetConfig(config) {
   if (!config.publicKey || typeof config.publicKey !== "string") {
@@ -35,6 +32,9 @@ function assertWidgetConfig(config) {
   }
   if (config.modules && config.modules.length === 0) {
     throw new CreditChekError("invalid_config", "`modules` must list at least one step, or be left out.");
+  }
+  if (config.environment !== void 0 && !ENVIRONMENTS.includes(config.environment)) {
+    throw new CreditChekError("invalid_config", '`environment` must be "production" or "development".');
   }
   try {
     new URL(resolveWidgetUrl(config));
@@ -54,6 +54,7 @@ function buildWidgetUrl(config, sessionId) {
   params.set("sessionId", sessionId);
   params.set("module", ((_a = config.modules) != null ? _a : ["identity"]).join(","));
   params.set("source", WIDGET_SOURCE);
+  if (config.environment) params.set("environment", config.environment);
   const hostOrigin = typeof window !== "undefined" ? window.location.origin : "";
   if (hostOrigin && hostOrigin !== "null") params.set("hostOrigin", hostOrigin);
   if (config.themeColor) params.set("themeColor", config.themeColor.replace(/^#/, ""));
@@ -416,7 +417,7 @@ function CreditChekButton({
 export {
   CreditChekButton,
   CreditChekError,
-  WIDGET_URLS,
+  WIDGET_URL,
   buildWidgetUrl,
   openCreditChekWidget,
   useCreditChek

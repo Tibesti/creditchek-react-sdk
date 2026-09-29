@@ -331,6 +331,7 @@ const { open, close, isOpen, steps, error } = useCreditChek(options);
 |---|---|---|---|
 | `publicKey` | `string` | **required** | Your public key. Must be from the same app and pair as the secret key that created the session |
 | `modules` | `("identity" \| "liveness")[]` | `["identity"]` | Steps to run, in order. See [Modules](#modules) |
+| `environment` | `"production" \| "development"` | from your key | `"development"` runs the widget in test mode and shows a Test mode notice. Left out, the widget takes live or test mode from your public key. See [Testing](#testing) |
 | `themeColor` | `string` | | Brand colour as hex, with or without `#`. Also colours the modal's loading spinner |
 | `prefill` | `WidgetPrefill` | | Details you already hold: `firstName`, `lastName`, `dob` (`YYYY-MM-DD`), `bvn`, `nin`, `email`. Prefilled identity fields are locked in the widget |
 | `onStep` | `(event: WidgetStepEvent) => void` | | A step finished |
@@ -409,7 +410,18 @@ More modules (credit reports, income and Recova mandates) are coming to the Reac
 
 ## Testing
 
-Use the **test** public and secret keys from the App section of the [dashboard](https://app.creditchek.africa/). They work with the same API URL and the same widget as your live keys, so nothing else in your code changes.
+Use the **test** public and secret keys from the App section of the [dashboard](https://app.creditchek.africa/). They work with the same API URL and the same widget as your live keys.
+
+Set `environment` to match the keys, so the widget runs in the right mode:
+
+```jsx
+useCreditChek({
+  publicKey: import.meta.env.VITE_CREDITCHEK_PUBLIC_KEY,
+  environment: import.meta.env.PROD ? "production" : "development",
+});
+```
+
+`environment` is sent to the widget in its URL. It doesn't change the widget address: both environments use `https://securedwidget.creditchek.africa`.
 
 **Next.js:** the package is marked `"use client"`, so you can import it into App Router client components directly. Keep the session routes in a Route Handler or API route, where the secret key stays on the server.
 

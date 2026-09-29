@@ -15,7 +15,7 @@ declare class CreditChekError extends Error {
 
 /** A step the customer goes through in the widget, in the order you list them. */
 type WidgetModule = "identity" | "liveness";
-/** Which CreditChek deployment to use. Keys only work in the environment they were issued for. */
+/** Whether the widget runs live (`production`) or in test mode (`development`). */
 type CreditChekEnvironment = "production" | "development";
 /** Customer details you already hold. Prefilled identity fields are locked in the widget. */
 interface WidgetPrefill {
@@ -38,7 +38,10 @@ interface WidgetConfig {
     /** Brand colour as hex, with or without `#`, e.g. `"#0046E6"`. */
     themeColor?: string;
     prefill?: WidgetPrefill;
-    /** Defaults to `"production"`. Ignored when `widgetUrl` is set. */
+    /**
+     * Sent to the widget as the `environment` query parameter. `"development"` runs it in test mode
+     * and shows its Test mode notice. Left out, the widget takes live or test mode from the public key.
+     */
     environment?: CreditChekEnvironment;
     /** Override the widget address, e.g. for a preview build. */
     widgetUrl?: string;
@@ -140,6 +143,6 @@ declare function openCreditChekWidget(options: OpenWidgetOptions): WidgetHandle;
 /** Builds the full widget URL for a session. */
 declare function buildWidgetUrl(config: WidgetConfig, sessionId: string): string;
 
-declare const WIDGET_URLS: Record<CreditChekEnvironment, string>;
+declare const WIDGET_URL = "https://securedwidget.creditchek.africa/";
 
-export { CreditChekButton, type CreditChekButtonProps, type CreditChekEnvironment, CreditChekError, type CreditChekErrorCode, type OpenWidgetOptions, type SessionIdSource, type UseCreditChekOptions, type UseCreditChekResult, WIDGET_URLS, type WidgetCallbacks, type WidgetCloseResult, type WidgetConfig, type WidgetHandle, type WidgetModule, type WidgetPrefill, type WidgetStepEvent, buildWidgetUrl, openCreditChekWidget, useCreditChek };
+export { CreditChekButton, type CreditChekButtonProps, type CreditChekEnvironment, CreditChekError, type CreditChekErrorCode, type OpenWidgetOptions, type SessionIdSource, type UseCreditChekOptions, type UseCreditChekResult, WIDGET_URL, type WidgetCallbacks, type WidgetCloseResult, type WidgetConfig, type WidgetHandle, type WidgetModule, type WidgetPrefill, type WidgetStepEvent, buildWidgetUrl, openCreditChekWidget, useCreditChek };

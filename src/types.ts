@@ -3,7 +3,7 @@ import type { CreditChekError } from "./errors";
 /** A step the customer goes through in the widget, in the order you list them. */
 export type WidgetModule = "identity" | "liveness";
 
-/** Which CreditChek deployment to use. Keys only work in the environment they were issued for. */
+/** Whether the widget runs live (`production`) or in test mode (`development`). */
 export type CreditChekEnvironment = "production" | "development";
 
 /** Customer details you already hold. Prefilled identity fields are locked in the widget. */
@@ -28,7 +28,10 @@ export interface WidgetConfig {
   /** Brand colour as hex, with or without `#`, e.g. `"#0046E6"`. */
   themeColor?: string;
   prefill?: WidgetPrefill;
-  /** Defaults to `"production"`. Ignored when `widgetUrl` is set. */
+  /**
+   * Sent to the widget as the `environment` query parameter. `"development"` runs it in test mode
+   * and shows its Test mode notice. Left out, the widget takes live or test mode from the public key.
+   */
   environment?: CreditChekEnvironment;
   /** Override the widget address, e.g. for a preview build. */
   widgetUrl?: string;

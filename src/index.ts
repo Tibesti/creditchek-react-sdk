@@ -6,7 +6,7 @@ export { openCreditChekWidget } from "./openWidget";
 export { buildWidgetUrl } from "./buildWidgetUrl";
 export { CreditChekError } from "./errors";
 export type { CreditChekErrorCode } from "./errors";
-export { WIDGET_URLS } from "./constants";
+export { WIDGET_URL } from "./constants";
 export type {
   CreditChekEnvironment,
   OpenWidgetOptions,
