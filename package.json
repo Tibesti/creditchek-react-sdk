@@ -1,6 +1,6 @@
 {
   "name": "@creditcliq/react-sdk",
-  "version": "2.0.0",
+  "version": "2.0.1",
   "description": "React SDK for the CreditChek verification widget: identity, liveness, credit, income and Recova in a few lines of code.",
   "keywords": [
     "creditchek",
